@@ -134,6 +134,7 @@ int main(int argc, char ** argv)
       cout << "\n6.4th example: use fixed branchrate multiplier for rate Ls on branch 43 with value 0.0 (no losses on branch)\n ./ALEml_undated species_tree.newick gene_tree_sample.ale rate_mutiplier:lambda:43:0.0 \n" << endl;
       cout << "\n6.1.1 example: optimize branchrate multiplier for rate of Ts _to_ branch 43 (same syntax for all other multipliers!)\n ./ALEml_undated species_tree.newick gene_tree_sample.ale S_branch_lengths:-1 \n" << endl;
       cout << "\n6.5th example: use fixed multiplier for Origination on branch 43 with value 0.0 (no origination on branch)\n ./ALEml_undated species_tree.newick gene_tree_sample.ale rate_mutiplier:O:43:0.0 \n" << endl;
+      cout << "\n7th example: Do not sample gene trees, exit after LL is calculated\n ./ALEml_undated species_tree.newick gene_tree_sample.ale ll_only=T \n" << endl;
 
       return 0;
     }
@@ -178,6 +179,7 @@ int main(int argc, char ** argv)
   vector<int> ml_branch_ids;
   vector<string> ml_ratetype_names;
   bool MRP=false;
+  bool LL_only = false;
 	
   model->set_model_parameter("undatedBL",false);
   for (int i=3;i<argc;i++)
@@ -190,6 +192,8 @@ int main(int argc, char ** argv)
     samples=atoi(tokens[1].c_str());
     else if (tokens[0]=="separators")
       model->set_model_parameter("gene_name_separators", tokens[1]);
+    else if (tokens[0]=="ll_only")
+      LL_only = true;
     else if (tokens[0]=="delta")
     {
       delta=atof(tokens[1].c_str());
@@ -350,6 +354,10 @@ int main(int argc, char ** argv)
   if (ml_branch_ids.size()>0) cout << "ML rate multipliers:\n" << ml_rate_multipliers.str(); 
 
   cout << "LL=" << mlll << endl;
+
+  if (LL_only) {
+    exit(0);
+  }
 
   cout << "Sampling reconciled gene trees.."<<endl;
   vector <string> sample_strings;
